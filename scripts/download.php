@@ -61,6 +61,7 @@ while(($buf=fgets($fp))!==false) {
   //run CURL request
   $ret=curl_exec($c);
   if($ret===false || curl_getinfo($c,CURLINFO_HTTP_CODE)!=200) {
+    fwrite($log_fp,"Error while downloading article with curID $aid\n");
     echo "CURL error\n";
     break;
   }
@@ -78,6 +79,13 @@ while(($buf=fgets($fp))!==false) {
   
   //decode the JSON object
   $data=json_decode($body,true);
+  
+  //check for API error
+  if(isset($data["error"])) {
+    fwrite($log_fp,"Error while downloading article with curID $aid: {$data['error']['code']} // {$data['error']['info']}\n");
+    continue;
+  }
+  
   $article_html=$data["parse"]["text"]["*"];
   $aname=$data["parse"]["title"];
   
