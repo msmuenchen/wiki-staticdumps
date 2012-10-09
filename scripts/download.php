@@ -27,14 +27,24 @@ if(!is_dir($dlpath)) {
 } else
   echo "Download directory $dlpath already exists\n";
 
+//open log file
+$logfile="$logdir/$listfile.download.log";
+$log_fp=fopen($logfile,"w");
+if($log_fp===false)
+  die("Error in fopen (logfile)\n");
+
 //Instantiate CURL object
 $c=curl_init();
 if($c===false)
   die("Could not instantiate CURL\n");
 curl_setopt_array($c,array(CURLOPT_USERAGENT=>$curl_ua, CURLOPT_ENCODING=>"gzip", CURLOPT_RETURNTRANSFER=>true, CURLINFO_HEADER_OUT=>true, CURLOPT_VERBOSE=>true, CURLOPT_HEADER=>true));
 
+$counter=0;
 //Loop over the article IDs
 while(($buf=fgets($fp))!==false) {
+  //start timer
+  $start_time=microtime(true);
+  
   //prepare article id
   $aid=trim($buf);
   
@@ -69,6 +79,7 @@ while(($buf=fgets($fp))!==false) {
   //decode the JSON object
   $data=json_decode($body,true);
   $article_html=$data["parse"]["text"]["*"];
+  $aname=$data["parse"]["title"];
   
   //write output file
   $outfile="$dlpath/$aid.html";
@@ -84,22 +95,31 @@ while(($buf=fgets($fp))!==false) {
   echo "Wrote to $outfile\n";
 
   //write meta to output file
-  $outfile="$dlpath/$aid.meta";
-  $d_fp=fopen($outfile,"w");
+  $metafile="$dlpath/$aid.meta";
+  $d_fp=fopen($metafile,"w");
   if($d_fp===false)
-    die("Error writing $outfile\n");
+    die("Error writing $metafile\n");
   $res=fwrite($d_fp,print_r($data,true));
   if($res===false)
-    die("Error writing $outfile\n");
+    die("Error writing $metafile\n");
   $res=fclose($d_fp);
   if($res===false)
-    die("Error writing $outfile\n");
-  echo "Wrote to $outfile\n";
+    die("Error writing $metafile\n");
+  echo "Wrote to $metafile\n";
+
+  $stop_time=microtime(true);
+  fwrite($log_fp,"Downloaded article $aname (curID $aid) to $outfile, metadata to $metafile in ".($stop_time-$start_time)." sec\n");
+  
+  $counter++;
 }
 
 //close CURL object
 curl_close($c);
 
+//close logfile handle
+fclose($log_fp);
+
 //close list handle
 fclose($fp);
+
 ?>
