@@ -41,6 +41,8 @@ if($c===false)
   die("Could not instantiate CURL\n");
 curl_setopt_array($c,array(CURLOPT_USERAGENT=>$curl_ua, CURLOPT_ENCODING=>"gzip", CURLOPT_RETURNTRANSFER=>true, CURLINFO_HEADER_OUT=>true, CURLOPT_VERBOSE=>true, CURLOPT_HEADER=>true));
 
+$total_start=microtime(true);
+
 $counter=0;
 //Loop over the article IDs
 while(($buf=fgets($fp))!==false) {
@@ -138,6 +140,11 @@ while(($buf=fgets($fp))!==false) {
   
   $counter++;
 }
+
+$total_stop=microtime(true);
+$str="Total elapsed time: ".($total_stop-$total_start)." seconds\n";
+echo "\n".$str;
+fwrite($log_fp,$str);
 
 //close CURL object
 curl_close($c);
