@@ -1,0 +1,839 @@
+/* MediaWiki:Common.css */
+/*-----------------------------------------------------------------------------------------------*/
+/* ACHTUNG! Common.css enthält die gemeinsamen Skin-Anpassungen der deutschsprachigen Wikipedia */
+/*---------------------------------------------------------------------------------------------*/
+
+/* Common.css ist in drei grundlegende Abschnitte gegliedert: */
+
+/* 1. Editierbare Seiteninhalte */
+/* 2. Sonstige Anpassungen (Spezialseiten, u.a.) */
+/* 3. Hauptseitenspezifisches */
+
+/* Jede Ergänzung/Änderung muss vorher jeweils für alle Skins auf Tauglichkeit getestet werden, */
+/* individuell per User.css! Ist hier erstmal geändert, dauert es dank Cache eine Weile, bis die */
+/* Änderungen bei allen Nutzern sichtbar oder, bei Fehlern, korrigiert sind. */
+
+/* +++++ 1. ANPASSUNGEN DER ANZEIGE VON EDITIERBAREN SEITENINHALTEN +++++ */
+
+/* Personennamen in Kapitälchen: class="Person" */
+.Person {
+	font-style: normal;
+	font-variant: small-caps;
+}
+
+/* [[Wikipedia:Zitate|Zitate]] (siehe [[Vorlage:Zitat]]) */
+p.Zitat {
+	font-style: normal;
+	margin-bottom: 0;
+}
+p.cite {
+	margin-top: 0;
+	padding-left: 1em;
+}
+
+/* [[Wikipedia:Quellenangaben|Quellenangaben]] nicht kursiv, da sie ggf. verschiedene Bestandteile enthalten */
+cite {
+	font-style: normal;
+}
+
+/* Stylesheet-Ergänzung zu Standard-[[Wikipedia:Navigationsleisten|Navigationsleisten]] */
+div.NavFrame {
+	display: inline-block; /* IE <= 7 */
+}
+div.NavFrame {
+	border: 1px solid #aaa;
+	clear: both;
+	display: block;
+	font-size: 95%;
+	margin-top: 1.5em;
+	padding: 2px;
+	text-align: center;
+}
+
+/* Automatisches Verschmelzen, funktioniert nicht im IE 6 */
+div.NavFrame + div.NavFrame {
+	margin-top: -1px;
+}
+div.NavPic {
+	float: left;
+	padding: 2px;
+}
+div.NavHead {
+	background: #efefef;
+	font-weight: bold;
+}
+
+/* Redundant zu .visualClear in shared.css und IE60Fixes.css */
+div.NavEnd {
+	display: none; /* broken */
+}
+div.NavFrame:after {
+	clear: both;
+	content: "";
+	display: block;
+}
+
+/* Stylesheet fuer den 'Ausklappen'-Button an Navileisten, der in [[MediaWiki:Common.js]] implementiert wird */
+.NavToggle {
+	float: right;
+	font-size: x-small;
+}
+
+/* [[Vorlage:NaviBlock]] */
+div.BoxenVerschmelzen {
+	border: 1px solid #aaa;
+	clear: both;
+	font-size: 95%;
+	margin-top: 1.5em;
+	padding-top: 2px;
+}
+div.BoxenVerschmelzen div.NavFrame {
+	border: none;
+	font-size: 100%;
+	margin: 0;
+	padding-top: 0;
+}
+
+/* Stylesheet-Ergänzung zu SideBoxen (ehedem [[Wikipedia:TownBox|TownBox]]) */
+div.sideBox {
+	background: white;
+	border: 1px solid gray;
+	clear: right;
+	float: right;
+	margin-left: 1em;
+	overflow: hidden;
+	padding: 0.3em;
+	position: relative; /* IE 6 */
+	width: 200px;
+}
+div.sideBox dl {
+	font-size: 96%;
+	margin: 0 0 0.3em;
+}
+div.sideBox dl dt {
+	background: none;
+	margin: 0.4em 0 0;
+}
+div.sideBox dl dd {
+	background: #f3f3f3;
+	margin: 0.1em 0 0 1.1em;
+}
+
+/* Stylesheet-Ergänzung zu [[Wikipedia:Taxoboxen|Taxoboxen]] und [[Wikipedia:Paläoboxen|Paläoboxen]] */
+table.taxobox,
+table.palaeobox {
+	background: white;
+	border: 1px solid gray;
+	border-collapse: collapse;
+	/* redundant zu class="float-right" */
+	clear: right;
+	float: right;
+	margin: 1em 0 1em 1em;
+}
+table.taxobox th,
+table.palaeobox th {
+	background: #9bcd9b;
+	border: 1px solid gray;
+	font-weight: bold;
+	text-align: center;
+}
+table.palaeobox th {
+	background: #e7dcc3;
+}
+table.taxobox div.thumb,
+table.taxobox div.thumb *,
+table.palaeobox div.thumb,
+table.palaeobox div.thumb * {
+	background: #f9f9f9;
+	border: none;
+	float: none;
+	margin: 0 auto;
+	padding: 0;
+}
+table.taxobox div.magnify,
+table.palaeobox div.magnify {
+	display: none;
+}
+table.taxobox tr td div.thumb div div.thumbcaption,
+table.taxobox td.Person,
+table.taxobox td.taxo-name,
+table.taxobox td.taxo-bild,
+table.palaeobox tr td div.thumb div div.thumbcaption,
+table.palaeobox td.Person,
+table.palaeobox td.taxo-name,
+table.palaeobox td.taxo-bild,
+table.palaeobox td.taxo-zeit {
+	text-align: center;
+}
+table.palaeobox td.taxo-ort {
+	text-align: left;
+}
+
+/* Bitte KEINE weiteren Definitionen dieser Art für Boxen hier, das gehört in entsprechende Vorlagen! */
+/* Hier 20 Mal Trivialitäten wie "text-align:center" zu definieren verlangsamt alles und ist nicht */
+/* Sinn der Sache. (Und wer nicht weiß warum, hat's nicht verstanden.) */
+
+/* aus Vorlage zur Entlastung, skinabhängigen Darstellung und Kombinierbarkeit hierher ausgelagert */
+.prettytable {
+	background: #f9f9f9;
+	border: 1px solid #aaa;
+	border-collapse: collapse;
+	margin: 1em 1em 1em 0;
+}
+.prettytable th,
+.prettytable td {
+	border: 1px solid #aaa;
+	padding: 0.2em;
+}
+.prettytable th {
+	text-align: center;
+}
+.prettytable caption {
+	font-weight: bold;
+}
+
+/* Zebra-Tabellen */
+table.wikitable.zebra > tbody > :nth-child(even):not([class*="hintergrundfarbe"]) {
+	background: white;
+}
+
+.nogrid th,
+.nogrid td {
+	border: none;
+}
+/* @noflip */div.float-left,
+table.float-left,
+ul.float-left,
+.float-left {
+	clear: left;
+	float: left;
+	margin: 1em 1em 1em 0;
+}
+/* @noflip */div.float-right,
+table.float-right,
+ul.float-right,
+.float-right {
+	clear: right;
+	float: right;
+	margin: 1em 0 1em 1em;
+}
+div.centered,
+table.centered,
+ul.centered,
+.centered {
+	margin-left: auto;
+	margin-right: auto;
+}
+.toptextcells td {
+	vertical-align: top;
+}
+
+/* gleicher vertikaler Abstand für Text und Listen in Tabellen */
+table ul, table p {
+	margin-top: .3em;
+}
+
+/* Metadaten (bspw. [[Wikipedia:Personendaten|Personendaten]]) */
+.metadata {
+	display: none;
+}
+table.metadata {
+	border: 1px solid #aaa;
+}
+.metadata-label {
+	color: #aaa;
+}
+
+/*
+ * Farbdefinitionen für Rahmen und Hintergründe von [[Wikipedia:Textbausteine|Textbausteinen]].
+ * Hier: Standardvorgaben für "dunkle Schrift auf hellem Grund".
+ * Für Hell-auf-dunkel-Skins ([[MediaWiki:Amethyst.css|Amethyst]]) müssen dort entsprechende Definitionen
+ * zusätzlich eingetragen werden! Anpassungen für andere Skins sind optional.
+ * (Die Angaben der Rahmenstärke dienen der Bequemlichkeit, so dass man
+ * für dünne Rahmen nur noch "border-style" angeben muss.)
+ */
+.rahmenfarbe1 { /* Wie Inhaltsverzeichnis */
+	border: 1px #aaa;
+}
+.rahmenfarbe2 { /* Unauffällig, geringer Kontrast */
+	border: 1px #e9e9e9;
+}
+.rahmenfarbe3 { /* "Rot", auffällig */
+	border: 1px #c00000;
+}
+.rahmenfarbe4 { /* Neutrale Farbe, deutlich */
+	border: 1px #88a;
+}
+.rahmenfarbe5 { /* "Schwarz", hoher Kontrast */
+	border: 1px #000;
+}
+
+table > * > tr.hintergrundfarbe1 > th,
+table > * > tr > th.hintergrundfarbe1,
+table.hintergrundfarbe1,
+.hintergrundfarbe1 { /* Wie Inhaltsverzeichnis */
+	background-color: #f9f9f9;
+}
+table > * > tr.hintergrundfarbe2 > th,
+table > * > tr > th.hintergrundfarbe2,
+table.hintergrundfarbe2,
+.hintergrundfarbe2 { /* "Weiß", für Nicht-Artikel-Seiten, neutral */
+	background-color: #ffffff;
+}
+table > * > tr.hintergrundfarbe3 > th,
+table > * > tr > th.hintergrundfarbe3,
+table.hintergrundfarbe3,
+.hintergrundfarbe3 { /* "Gelb", auffällig */
+	background-color: #ffff40;
+}
+table > * > tr.hintergrundfarbe4 > th,
+table > * > tr > th.hintergrundfarbe4,
+table.hintergrundfarbe4,
+.hintergrundfarbe4 { /* Sehr auffällig */
+	background-color: #fa0;
+}
+table > * > tr.hintergrundfarbe5 > th,
+table > * > tr > th.hintergrundfarbe5,
+table.hintergrundfarbe5,
+.hintergrundfarbe5 { /* Neutral, abgesetzt */
+	background-color: #e0e0e0;
+}
+table > * > tr.hintergrundfarbe6 > th,
+table > * > tr > th.hintergrundfarbe6,
+table.hintergrundfarbe6,
+.hintergrundfarbe6 { /* Allgemein „bunt“, für Hervorhebungen und Unterscheidungen */
+	background-color: #b3b7ff;
+}
+table > * > tr.hintergrundfarbe7 > th,
+table > * > tr > th.hintergrundfarbe7,
+table.hintergrundfarbe7,
+.hintergrundfarbe7 { /* Allgemein „bunt“, für Hervorhebungen und Unterscheidungen */
+	background-color: #ffcbcb;
+}
+table > * > tr.hintergrundfarbe8 > th,
+table > * > tr > th.hintergrundfarbe8,
+table.hintergrundfarbe8,
+.hintergrundfarbe8 { /* Allgemein „bunt“, für Hervorhebungen und Unterscheidungen */
+	background-color: #ffebad;
+}
+table > * > tr.hintergrundfarbe9 > th,
+table > * > tr > th.hintergrundfarbe9,
+table.hintergrundfarbe9,
+.hintergrundfarbe9 { /* Allgemein „bunt“, für Hervorhebungen und Unterscheidungen */
+	background-color: #b9ffc5;
+}
+
+/* Keine Vergrößerung der Zeilenhöhe durch hochgestellte Zahlen der Fußnoten */
+sup.reference {
+	font-style: normal;
+	font-weight: 400;
+}
+sup,
+sub {
+	line-height: 1em;
+}
+
+/* Hervorhebung der angeklickten Fußnoten und der Rückverweise in blau */
+ol.references > li:target,
+sup.reference:target {
+	background: #def;
+}
+
+/* Hochgestellte Buchstaben in der Einzelnachweiseliste kursiv setzen */
+ol.references li a[href|="#cite_ref"] {
+	font-style: italic;
+}
+
+/* Inline-Verwendung der [[:Kategorie:Vorlage:Schwesterprojektverweis|Schwesterprojektverweise]] */
+ol.references li div.sisterproject {
+	display: inline;
+}
+
+/* Für MediaWiki:Missingcommentheader */
+div#mw-missingcommentheader b {
+	color: #900;
+}
+
+/* Für [[MediaWiki:Anoneditwarning]] und weitere Hinweise, die alle untereinander stehen */
+div#mw-anon-edit-warning,
+div#mw-anon-preview-warning,
+div#mw-missingsummary,
+div#wp_talkpagetext {
+	background: #d3e1f2;
+	border: 1px solid #1a47ff;
+	margin: 1em auto;
+	padding: 1em;
+	width: 80%;
+}
+
+/* Bei URLs, die auf unser Projekt und verwandte Projekte verweisen, den Pfeil ausblenden
+ * Dieser Pfeil dient nur dazu, auf externe Ziele hinzuweisen
+ * Auf den Einsatz der Klasse "plainlinks" kann dadurch verzichtet werden
+ */
+div#content a.external[href^="//de.wikipedia.org"],
+div#content a.external[href^="http://de.wikipedia.org"],
+div#content a.external[href^="https://de.wikipedia.org"],
+div#content a.external[href^="https://secure.wikimedia.org/wikipedia/de/"],
+div#content a.external[href^="//toolserver.org"],
+div#content a.external[href^="http://toolserver.org"],
+div#content a.external[href^="https://toolserver.org"],
+#mw_content a.external[href^="//de.wikipedia.org"],
+#mw_content a.external[href^="http://de.wikipedia.org"],
+#mw_content a.external[href^="https://de.wikipedia.org"],
+#mw_content a.external[href^="https://secure.wikimedia.org/wikipedia/de/"],
+#mw_content a.external[href^="//toolserver.org"],
+#mw_content a.external[href^="http://toolserver.org"],
+#mw_content a.external[href^="https://toolserver.org"] {
+	background: none;
+	padding-right: 0;
+}
+
+/* Falls bei der Seitenbearbeitung vergessen wurde, die Zusammenfassung auszufüllen */
+.mw-summarymissed {
+	border: 5px solid red;
+	padding: 2px;
+}
+
+/* Copyrightwarnung */
+div#editpage-copywarn {
+	background: #fff;
+	border: 1px solid #c00000;
+	font-size: 90%;
+}
+
+.mw-tos-summary {
+/*	background: #fff;
+	border: 1px solid #c00000;
+	padding-left: 1em; */
+	display: none;      
+}
+
+/* Allow limiting of which header levels are shown in a TOC;
+   <div class="toclimit-3">, for instance, will limit to
+   showing ==headings== and ===headings=== but no further
+   (as long as there are no =headings= on the page, which
+   there shouldn't be according to the MoS).
+ */
+.toclimit-2 .toclevel-1 ul,
+.toclimit-3 .toclevel-2 ul,
+.toclimit-4 .toclevel-3 ul,
+.toclimit-5 .toclevel-4 ul,
+.toclimit-6 .toclevel-5 ul,
+.toclimit-7 .toclevel-6 ul {
+    display: none;
+}
+
+/* +++++ 2. SONSTIGE ANPASSUNGEN (Spezialseiten u. a.) +++++ */
+
+/* Markierung von Redirects in [[Special:Allpages]], [[Special:Watchlist]], Kategorien */
+.allpagesredirect,
+.watchlistredir,
+.redirect-in-category {
+	font-style: italic;
+}
+
+/* Größerer Abstand zwischen TOC-Nummerierung und TOC-Eintrag */
+span.tocnumber {
+	margin-right: 0.3em;
+}
+
+/* Skinabhängige absolute Positionierungen ausblenden */
+/* Bitte [[MediaWiki Diskussion:Common.css/Archiv 1#Absolute Positionierungen]] beachten */
+#artikelstadium,
+#commons-icon,
+#coordinates,
+#editcount,
+#issnlink,
+#shortcut,
+#spoken-icon,
+.topicon {
+	display: none;
+}
+
+/* Anpassungen für [[:Template:Link_FA]] */
+
+/* change the bullets for links to special articles */
+div#p-lang li.FA {
+        /* hier immer auch linkFA_bullet in Common.js mit anpassen für die älteren skins! */
+        list-style-image: url(//upload.wikimedia.org/wikipedia/commons/d/d0/Monobook-bullet-star-transparent.png);
+}
+/* change the bullets for links to special articles */
+div#p-lang li.GA {
+        /* hier immer auch linkGA_bullet in Common.js mit anpassen für die älteren skins! */
+        list-style-image: url(//upload.wikimedia.org/wikipedia/commons/a/a1/Monobook-bullet-star-gray.png);
+}
+
+/* Verhindere, dass Infoboxen etc. in den Inhalt von Kategorien hineinragen.
+Das betrifft nur Kategorieseiten. */
+div#mw-subcategories,
+div#mw-pages,
+div#mw-category-media {
+	clear: both;
+}
+
+/* DIVs in ImageMaps inlinen (Vorschlag von Revolus) */
+.imagemap-inline div {
+	display: inline; /* broken */
+}
+
+/* [[Special:Hochladen]]: Warnmeldung auf bestehende Dateien, unerwünschte Prefixe usw. deutlicher hervorheben. */
+td#wpDestFile-warning ul {
+	border: 1px solid red;
+	padding: 1.5em;
+}
+
+/* höheres Uploadfeld */
+textarea#wpUploadDescription {
+	height: 20em;
+}
+
+/* Warnmeldung für gesperrte Titel */
+.mw-titleprotectedwarning {
+	background: #eee;
+	border: 2px solid red;
+	padding: 1em;
+}
+
+/* Warnmeldung bei der Bearbeitung von Seiten im MediaWiki-Namensraum */
+.mw-editinginterface {
+	background: #f9f9f9;
+	border: 1px solid #c00000;
+	padding: 2px;
+}
+
+/* Überschrift 5. und 6. Ordnung proportionaler zu Fließtext */
+div#content h5 {
+	font-size: 108%; /* Original: 100% */
+}
+div#content h5 .editsection {
+	font-size: 93%; /* 1/108% */
+}
+div#content h6,
+div#content h6 .editsection {
+	font-size: 100%; /* Original: 80% = kleiner als Bodytext, unschön */
+}
+
+/* Anleitung auf Special:Search */
+.mw-searchresult {
+	font-size: 84%;
+	margin: 5px;
+}
+
+/* Gestaltung der Edittools-Leiste [[MediaWiki:Onlyifediting.js]] */
+div#specialchars {
+	background: white;
+	border: 1px solid #aaa;
+	margin-top: 3px;
+	padding: 1px;
+	text-align: left;
+}
+
+/* Legende für Versionsgeschichte */
+.mw-history-legend {
+	background: #f9f9f9;
+	border: 1px solid #e9e9e9;
+	clear: both;
+	font-size: 90%;
+	margin: 2px 0;
+	padding: 0 5px 5px;
+}
+
+
+/* Unterstrichelung für Abkürzungen */
+abbr, acronym {
+        border-bottom-color: #ccc; /* Fallback für alte Browser: https://developer.mozilla.org/en/CSS/color_value#Browser_Compatibility */
+        border-bottom-color: rgba(75%, 75%, 75%, .5);
+}
+abbr:hover, acronym:hover {
+        border-bottom-color: inherit; /* Internet Explorer 8 */
+        border-bottom-color: currentColor;
+}
+
+
+/* +++++ 3. [[Wikipedia:Hauptseite|HAUPTSEITE]] (seit 2006) +++++ */
+
+/* Kategorie verbergen */
+/* Überschrift verbergen */
+/* Redirhinweis verbergen - ACHTUNG: Je nach Skin muss jetzt der Abstand zum oberen Rand korrigiert werden */
+body.page-Wikipedia_Hauptseite #catlinks,
+body.page-Wikipedia_Hauptseite.action-view h1.firstHeading,
+body.page-Wikipedia_Hauptseite.action-view #contentSub {
+	display: none;
+}
+
+#hauptseite h2 {
+	background: #d8e8ff;
+	border: 1px solid #8898bf;
+	font-size: 1em;
+	font-weight: bold;
+	margin: 0;
+	padding: 0.1em 0;
+}
+#hauptseite .inhalt {
+	background: #fff;
+	border: 1px solid #8898bf;
+	border-top: 0;
+	padding: 0.3em 0.8em 0.4em;
+}
+#hauptseite .inhalt hr {
+	background: #8898bf;
+	color: #8898bf;
+	height: 1px;
+	margin: 0.5em 0;
+}
+#hauptseite .inhalt .mehr {
+	clear: both;
+	font-size: 95%;
+	margin-top: 0.8em;
+	text-align: right;
+}
+.hauptseite-oben,
+.hauptseite-links,
+.hauptseite-rechts {
+	margin-bottom: 1em;
+}
+.hauptseite-links {
+	margin-right: 0.5em;
+}
+.hauptseite-rechts {
+	margin-left: 0.5em;
+}
+.hauptseite-oben h2,
+.hauptseite-unten h2 {
+	text-align: center;
+}
+.hauptseite-oben .inhalt .portale {
+	font-weight: bold;
+	margin: 0.2em 0;
+}
+.hauptseite-oben .inhalt .intern {
+	font-size: 90%;
+	text-align: center;
+}
+.hauptseite-links h2,
+.hauptseite-rechts h2 {
+	text-indent: 0.8em;
+}
+#hauptseite-schwesterprojekte .inhalt a {
+	font-weight: bold;
+}
+
+/* IPA links nicht unterstreichen */
+.IPA a:link,
+.IPA a:visited {
+	text-decoration: none;
+}
+
+/* CSS-Klassen für Schriftarten als Workaround für Defizite in alten IE-Versionen.
+ * Achtung: IE 6 und 7 mögen keine Zeilenumbrüche zwischen den Fonts.
+ * In IE8 nicht mehr nötig, soll mit den alten Versionen aussterben. Browserweiche:
+ * http://de.wikipedia.org/w/index.php?diff=76143595&oldid=76098729
+ */
+* html .Unicode {
+	font-family: Code2000, Sun-ExtA, "Arial Unicode MS", NSimSun, sans-serif;
+}
+:first-child ~ html .Unicode {
+	font-family: Code2000, Sun-ExtA, "Arial Unicode MS", NSimSun, sans-serif;
+}
+* html .Unicode1 {
+	font-family: Code2001, Quivira, "MPH 2B Damase", sans-serif;
+}
+:first-child ~ html .Unicode1 {
+	font-family: Code2001, Quivira, "MPH 2B Damase", sans-serif;
+}
+* html .Unicode2 {
+	font-family: Sun-ExtB, Code2002, sans-serif;
+}
+:first-child ~ html .Unicode2 {
+	font-family: Sun-ExtB, Code2002, sans-serif;
+}
+* html .IPA {
+	font-family: Quivira, Code2000, Sun-ExtA, "DejaVu Sans", "Gentium Plus", Gentium, "Doulos SIL", Helvetica, "Arial Unicode MS", "Lucida Sans Unicode", sans-serif;
+}
+:first-child ~ html .IPA {
+	font-family: Quivira, Code2000, Sun-ExtA, "DejaVu Sans", "Gentium Plus", Gentium, "Doulos SIL", Helvetica, "Arial Unicode MS", "Lucida Sans Unicode", sans-serif;
+}
+* html .IAST {
+	font-family: Code2000, SunExtA, "Arial Unicode MS", sans-serif;
+}
+* html .altitalisch,
+* html .gotisch {
+	font-family: Quivira, Code2001, "MPH 2B Damase", sans-serif;
+}
+:first-child ~ html .altitalisch,
+:first-child ~ html .gotisch {
+	font-family: Quivira, Code2001, "MPH 2B Damase", sans-serif;
+}
+* html .hebrew {
+	font-family: Quivira, Sun-ExtA, "Arial Unicode MS", "SBL Hebrew", Code2000, "MPH 2B Damase", sans-serif;
+}
+:first-child ~ html .hebrew {
+	font-family: Quivira, Sun-ExtA, "Arial Unicode MS", "SBL Hebrew", Code2000, "MPH 2B Damase", sans-serif;
+}
+* html .spanAr {
+	font-family: "Arial Unicode MS", Scheherazade, Code2000, "DejaVu Sans", sans-serif;
+}
+:first-child ~ html .spanAr {
+	font-family: "Arial Unicode MS", Scheherazade, Code2000, "DejaVu Sans", sans-serif;
+}
+* html .music-symbol {
+	font-family: "Musical Symbols", Euterpe, Code2001, sans-serif;
+}
+:first-child ~ html .music-symbol {
+	font-family: "Musical Symbols", Euterpe, Code2001, sans-serif;
+}
+* html .polytonic {
+	font-family: "Arial Unicode MS", "Palatino Linotype", Code2000, "New Athena Unicode", "Gentium Plus", Gentium, "Athena Unicode";
+}
+* html .okina {
+	font-family: "Lucida Sans Unicode";
+}
+
+/* Flagged-Revisions-Backlog-Sitenotice */
+.fr-watchlist-pending-notice {
+	background: transparent;
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* Standardmäßige Ausblendung der Flagged-Revisions-Kommentarbox */
+.fr-comment-box  {
+	display: none;
+}
+
+/* Hintergrund des Sichten-Links auf der Beobachtungsliste entfärben */
+.mw-fr-reviewlink {
+	background: transparent;
+}
+
+/* Korrekturen für den ausklappbaren Teil der FlaggedRevs-Box:
+ * - Positionierung im Vordergrund relativ positionierter Vorlagen
+ *   (Positionskarte, Lageplan, Bausteindesign1 usw.)
+ * - Standardmäßig ausgeblendet, weil er ohne JavaScript sonst Inhalte versperrt
+ *   ([[bugzilla:14128]]), flaggedrevs.js blendet ihn wieder ein
+ */
+div.flaggedrevs_short div {
+	z-index: 1; /* IE <= 7 */
+}
+div#mw-fr-revisiondetails {
+	display: none;
+}
+
+/* Abstand zwischen Liste und Inhaltsverzeichnis erhöhen, siehe http://de.wikipedia.org/w/index.php?title=MediaWiki_Diskussion:Common.css&oldid=51639015#Abstand_vor_Inhaltsverzeichnis */
+ul + .toc,
+ol + .toc {
+	margin-top: 0.5em;
+}
+
+/* Im Projekt WP:GEO benutzt die [[Vorlage:Coordinate]] das «geo-microformat» zur semantischen
+Auszeichnung des Texts. Der Inhalt dieses [[Tag (Informatik)|Tags]] ist nicht für den Leser bestimmt. */
+.geo {
+	display: none;
+}
+
+/* Patrollink ausblenden, da die Eweiterung hier nicht aktiviert ist und
+   deren Optik zu sehr den gesichteten Versionen ähnelt. */
+.fr-diff-patrollink,
+.patrollink {
+	display: none;
+}
+
+/* Rollback-Knopf auf Beobachtungsliste ausblenden, da es dort nur von sehr beschränktem Nutzen
+   ist und zu sehr vielen Reverts aus Versehen führt */
+.page-Spezial_Beobachtungsliste .mw-rollback-link {
+	display: none;
+}
+/* MediaWiki:Vector.css */
+/* CSS an dieser Stelle wirkt sich auf den Vector-Skin aus. Für allgemeingültige Skin-Anpassungen bitte [[MediaWiki:Common.css]] bearbeiten. */
+
+/* Koordinaten in Artikeln oben rechts */
+#coordinates,
+#editcount,
+#issnlink,
+#shortcut {
+	display: block;
+	font-size: 10px;
+	line-height: 11px;
+	position: absolute;
+	right: 0;
+	text-align: right;
+	text-indent: 0;
+	top: -1.4em;
+	white-space: nowrap;
+}
+
+/* showTopicon in [[MediaWiki:Vector.js]] */
+div.topicon {
+	float: right;
+	margin-left: 3px;
+	font-size: 0.8em;
+}
+#firstHeading {
+	overflow: visible;
+}
+
+/* Spezialseiten */
+.sp-cached {
+	background: #ffffe0 url(//upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Clock_and_warning.svg/20px-Clock_and_warning.svg.png) no-repeat 5px 3px;
+	border: 1px solid #eeee80;
+	color: #606000;
+	font-style: italic;
+	margin: 0.3em 0;
+	padding: 4px 0 4px 30px;
+}
+
+/* Auszeichnung lesenswerter und exzellenter Artikel in anderen Sprachen */
+#p-lang li.FA {
+	background: url("//upload.wikimedia.org/wikipedia/commons/d/d0/Monobook-bullet-star-transparent.png") no-repeat;
+	list-style-image: none !important; /* Übersteuern der Common.css notwendig */
+	margin-left: -10px !important;
+	padding-left: 10px !important;
+}
+#p-lang li.GA {
+	background: url("//upload.wikimedia.org/wikipedia/commons/a/a1/Monobook-bullet-star-gray.png") no-repeat;
+	list-style-image: none !important; /* Übersteuern der Common.css notwendig */
+	margin-left: -10px !important;
+	padding-left: 10px !important;
+}
+
+/* [[bugzilla:24515]] */
+html {
+	font-size: 100%;
+}
+
+@media print {
+	/* MediaWiki:Print.css */
+	/* Das folgende CSS wird in der Druckausgabe geladen. */
+	
+	/* Navigationsleisten nicht mit ausdrucken */
+	div.NavFrame,
+	div.BoxenVerschmelzen {
+		display: none;
+	}
+	
+	/* ↑ a b c usw. in der Einzelnachweiseliste nicht mit ausdrucken,
+	    sinnlos, da man auf dem Papier nicht klicken kann und die Buchstaben
+	    im Text auch nicht vorkommen
+	 */
+	span.mw-cite-backlink {
+		display: none;
+	}
+	
+	/* [[Wikipedia:Verbesserungsvorschläge/Feature-Requests/Archiv/2007#a:after in der commonPrint.css (erledigt)]] */
+	#content .plainlinks-print a.external.text:after,
+	#content .plainlinks-print a.external.autonumber:after {
+		content: "";
+	}
+	
+	/* Hide FlaggedRevs notice, see [[bugzilla:37149]] */
+	#mw-fr-reviewnotice {
+		display: none;
+	}
+	
+}
+@media handheld {
+	/* MediaWiki:Handheld.css */
+	/* Das folgende CSS wird für Handheld-Geräte, basierend auf der in $wgHandheldStyle konfigurierten Benutzeroberfläche, geladen. */
+	
+}
