@@ -88,10 +88,23 @@ while(($buf=fgets($fp))!==false) {
   
   //run CURL request
   $ret=curl_exec($c);
-  if($ret===false || curl_getinfo($c,CURLINFO_HTTP_CODE)!=200) {
+  
+  //check for CURL fail => fatal error
+  if($ret===false) {
     fwrite($log_fp,"At $counter: Error while downloading article with curID $cvid\n");
     $ob=ob_get_clean(); fwrite($log_fp,$ob);
-    echo "CURL error\n";
+    $str="CURL fatal error: ".curl_error($c)."\n";
+    fwrite($log_fp,$str);
+    die("\n$str");
+  }
+  
+  //check for HTTP != 200
+  if(curl_getinfo($c,CURLINFO_HTTP_CODE)!=200) {
+    fwrite($log_fp,"At $counter: Error while downloading article with curID $cvid\n");
+    $ob=ob_get_clean(); fwrite($log_fp,$ob);
+    $str="HTTP retcode: ".curl_getinfo($c,CURLINFO_HTTP_CODE)."\n";
+    fwrite($log_fp,$str);
+    echo "\n".$str;
     break;
   }
   
