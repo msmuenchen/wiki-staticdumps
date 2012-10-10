@@ -32,7 +32,7 @@ if(!is_dir($dlpath)) {
 
 //open log file
 $logfile="$logdir/$listfile.download.log";
-$log_fp=fopen($logfile,"w");
+$log_fp=fopen($logfile,"a");
 if($log_fp===false)
   die("Error in fopen (logfile)\n");
 
