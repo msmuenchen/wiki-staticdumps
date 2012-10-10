@@ -1,8 +1,9 @@
 <?
 // Step 1: download the articles from a list
-// Call: php download.php CFGFILE LISTFILE
+// Call: php download.php CFGFILE LISTFILE [SKIP]
 // CFGFILE is the name of a configfile in the config/ directory
 // LISTFILE is the name of an article list in the lists/ directory
+// SKIP: optional, skip SKIP entries in the list
 
 require("common.php");
 
@@ -41,11 +42,27 @@ if($c===false)
   die("Could not instantiate CURL\n");
 curl_setopt_array($c,array(CURLOPT_USERAGENT=>$curl_ua, CURLOPT_ENCODING=>"gzip", CURLOPT_RETURNTRANSFER=>true, CURLINFO_HEADER_OUT=>true, CURLOPT_VERBOSE=>true, CURLOPT_HEADER=>true));
 
+//check if skipping is enabled
+if(isset($argv[3]))
+  $skip=$argv[3];
+else
+  $skip=0;
+  
 $total_start=microtime(true);
 
 $counter=0;
 //Loop over the article IDs
 while(($buf=fgets($fp))!==false) {
+  $counter++;
+  
+  //skip, if needed
+  if($counter<$skip) {
+    echo "\x1b[1`";
+    echo "$counter - SKIP TO $skip";
+    continue;
+  }
+
+  begin:  
   //start timer
   $start_time=microtime(true);
   
@@ -61,7 +78,7 @@ while(($buf=fgets($fp))!==false) {
   //prepare URL
   if($debug)
     echo "Getting article ID $cvid from server\n";
-  $url=$api_url."?action=parse&prop=text|displaytitle&format=json&oldid=$cvid";
+  $url=$api_url."?action=parse&prop=text|displaytitle&format=json&maxlag=5&oldid=$cvid";
   if($debug)
     echo "URL is $url\n";
   curl_setopt($c,CURLOPT_URL,$url);
@@ -69,7 +86,7 @@ while(($buf=fgets($fp))!==false) {
   //run CURL request
   $ret=curl_exec($c);
   if($ret===false || curl_getinfo($c,CURLINFO_HTTP_CODE)!=200) {
-    fwrite($log_fp,"Error while downloading article with curID $cvid\n");
+    fwrite($log_fp,"At $counter: Error while downloading article with curID $cvid\n");
     echo "CURL error\n";
     break;
   }
@@ -92,7 +109,12 @@ while(($buf=fgets($fp))!==false) {
   
   //check for API error
   if(isset($data["error"])) {
-    fwrite($log_fp,"Error while downloading article with curID $cvid: {$data['error']['code']} // {$data['error']['info']}\n");
+    if($data["error"]["code"]=="maxlag") {
+      echo "At $counter: encountered db lag, sleeping 5 seconds and retrying...\n";
+      sleep(5);
+      goto begin;
+    }
+    fwrite($log_fp,"At $counter: Error while downloading article with curID $cvid: {$data['error']['code']} // {$data['error']['info']}\n");
     continue;
   }
   
@@ -130,7 +152,7 @@ while(($buf=fgets($fp))!==false) {
 
   $stop_time=microtime(true);
   $aname_safe=preg_replace('/[^(\x20-\x7F)]*/','', $aname);
-  fwrite($log_fp,"Downloaded article $aname_safe (curID $cvid, aid {$a['id']}) to $outfile, metadata to $metafile in ".($stop_time-$start_time)." sec\n");
+  fwrite($log_fp,"At $counter: downloaded article $aname_safe (curID $cvid, aid {$a['id']}) to $outfile, metadata to $metafile in ".($stop_time-$start_time)." sec\n");
 
   //show progress
   echo "\x1b[1`";
