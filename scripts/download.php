@@ -71,12 +71,14 @@ while(($buf=fgets($fp))!==false) {
   
   //prepare article id
   $data=trim($buf);
+
+  //skip over blank lines
+  if($data=="")
+    continue;
+
   $a=array();
   list($a["id"],$a["title"],$a["aid"],$a["is_redir"],$a["ns"])=explode("|",$data);
   $cvid=$a["aid"];
-  //skip over blank lines
-  if($cvid=="")
-    continue;
   
   //prepare URL
   echo "Getting article ID $cvid from server\n";
