@@ -87,6 +87,7 @@ while(($buf=fgets($fp))!==false) {
   }
   
   $article_html=$data["parse"]["text"]["*"];
+  $data["parse"]["text"]["*"]="removed";
   $aname=$data["parse"]["title"];
   
   //write output file
@@ -107,7 +108,7 @@ while(($buf=fgets($fp))!==false) {
   $d_fp=fopen($metafile,"w");
   if($d_fp===false)
     die("Error writing $metafile\n");
-  $res=fwrite($d_fp,print_r($data,true));
+  $res=fwrite($d_fp,json_encode($data["parse"],JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP));
   if($res===false)
     die("Error writing $metafile\n");
   $res=fclose($d_fp);
