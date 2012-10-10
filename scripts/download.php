@@ -54,7 +54,7 @@ while(($buf=fgets($fp))!==false) {
   
   //prepare URL
   echo "Getting article ID $aid from server\n";
-  $url=$api_url."?action=parse&prop=text&format=json&oldid=$aid";
+  $url=$api_url."?action=parse&prop=text|displaytitle&format=json&oldid=$aid";
   echo "URL is $url\n";
   curl_setopt($c,CURLOPT_URL,$url);
   
