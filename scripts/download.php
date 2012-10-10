@@ -47,15 +47,18 @@ while(($buf=fgets($fp))!==false) {
   
   //prepare article id
   $aid=trim($buf);
-  
+  echo $aid."\n";
+  exit;
   //skip over blank lines
   if($aid=="")
     continue;
   
   //prepare URL
-  echo "Getting article ID $aid from server\n";
+  if($debug)
+    echo "Getting article ID $aid from server\n";
   $url=$api_url."?action=parse&prop=text|displaytitle&format=json&oldid=$aid";
-  echo "URL is $url\n";
+  if($debug)
+    echo "URL is $url\n";
   curl_setopt($c,CURLOPT_URL,$url);
   
   //run CURL request
@@ -72,10 +75,12 @@ while(($buf=fgets($fp))!==false) {
   $body=substr($ret, $header_size);
   
   //dump request info
-  echo "Data was ".strlen($body)." bytes long\n";
-  echo "CURL info: ".print_r(curl_getinfo($c),true)."\n";
-  echo "Out header: ".curl_getinfo($c,CURLINFO_HEADER_OUT)."\n";
-  echo "In header: $header\n";
+  if($debug) {
+    echo "Data was ".strlen($body)." bytes long\n";
+    echo "CURL info: ".print_r(curl_getinfo($c),true)."\n";
+    echo "Out header: ".curl_getinfo($c,CURLINFO_HEADER_OUT)."\n";
+    echo "In header: $header\n";
+  }
   
   //decode the JSON object
   $data=json_decode($body,true);
@@ -101,7 +106,8 @@ while(($buf=fgets($fp))!==false) {
   $res=fclose($d_fp);
   if($res===false)
     die("Error writing $outfile\n");
-  echo "Wrote to $outfile\n";
+  if($debug)
+    echo "Wrote to $outfile\n";
 
   //write meta to output file
   $metafile="$dlpath/$aid.meta";
@@ -114,10 +120,19 @@ while(($buf=fgets($fp))!==false) {
   $res=fclose($d_fp);
   if($res===false)
     die("Error writing $metafile\n");
-  echo "Wrote to $metafile\n";
+  if($debug)
+    echo "Wrote to $metafile\n";
 
   $stop_time=microtime(true);
   fwrite($log_fp,"Downloaded article $aname (curID $aid) to $outfile, metadata to $metafile in ".($stop_time-$start_time)." sec\n");
+
+  //show progress
+  if($c % 1000==0) {
+    echo "\x1b[1`";
+    echo str_pad(" ",60," ");
+    echo "\x1b[1`";
+    echo "$c";
+  }
   
   $counter++;
 }
