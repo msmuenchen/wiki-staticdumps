@@ -62,7 +62,10 @@ while(($buf=fgets($fp))!==false) {
     continue;
   }
 
-  begin:  
+  begin:
+  //start output buffering in case error happens
+  ob_start();
+  
   //start timer
   $start_time=microtime(true);
   
@@ -76,17 +79,16 @@ while(($buf=fgets($fp))!==false) {
     continue;
   
   //prepare URL
-  if($debug)
-    echo "Getting article ID $cvid from server\n";
+  echo "Getting article ID $cvid from server\n";
   $url=$api_url."?action=parse&prop=text|displaytitle&format=json&maxlag=5&oldid=$cvid";
-  if($debug)
-    echo "URL is $url\n";
+  echo "URL is $url\n";
   curl_setopt($c,CURLOPT_URL,$url);
   
   //run CURL request
   $ret=curl_exec($c);
   if($ret===false || curl_getinfo($c,CURLINFO_HTTP_CODE)!=200) {
     fwrite($log_fp,"At $counter: Error while downloading article with curID $cvid\n");
+    $ob=ob_get_clean(); fwrite($log_fp,$ob);
     echo "CURL error\n";
     break;
   }
@@ -97,12 +99,10 @@ while(($buf=fgets($fp))!==false) {
   $body=substr($ret, $header_size);
   
   //dump request info
-  if($debug) {
-    echo "Data was ".strlen($body)." bytes long\n";
-    echo "CURL info: ".print_r(curl_getinfo($c),true)."\n";
-    echo "Out header: ".curl_getinfo($c,CURLINFO_HEADER_OUT)."\n";
-    echo "In header: $header\n";
-  }
+  echo "Data was ".strlen($body)." bytes long\n";
+  echo "CURL info: ".print_r(curl_getinfo($c),true)."\n";
+  echo "Out header: ".curl_getinfo($c,CURLINFO_HEADER_OUT)."\n";
+  echo "In header: $header\n";
   
   //decode the JSON object
   $data=json_decode($body,true);
@@ -133,8 +133,7 @@ while(($buf=fgets($fp))!==false) {
   $res=fclose($d_fp);
   if($res===false)
     die("Error writing $outfile\n");
-  if($debug)
-    echo "Wrote to $outfile\n";
+  echo "Wrote to $outfile\n";
 
   //write meta to output file
   $metafile="$dlpath/$cvid.meta";
@@ -147,13 +146,15 @@ while(($buf=fgets($fp))!==false) {
   $res=fclose($d_fp);
   if($res===false)
     die("Error writing $metafile\n");
-  if($debug)
-    echo "Wrote to $metafile\n";
+  echo "Wrote to $metafile\n";
 
   $stop_time=microtime(true);
   $aname_safe=preg_replace('/[^(\x20-\x7F)]*/','', $aname);
   fwrite($log_fp,"At $counter: downloaded article $aname_safe (curID $cvid, aid {$a['id']}) to $outfile, metadata to $metafile in ".($stop_time-$start_time)." sec\n");
 
+  //delete output buffer if nothing happened...
+  ob_end_clean();
+  
   //show progress
   echo "\x1b[1`";
   echo str_pad(" ",60," ");
