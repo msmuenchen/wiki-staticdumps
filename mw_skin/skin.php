@@ -6,6 +6,29 @@
 <link rel="copyright" href="http://creativecommons.org/licenses/by-sa/3.0/">
 <link rel="stylesheet" href="assets/module-styles.css">
 <link rel="stylesheet" href="assets/site-styles.css">
+<script type="text/javascript" src="assets/jquery-1.8.2.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	var hash = location.href.substr(location.href.indexOf("#")).substring(1);
+	if(hash=="")
+		location.hash="#dewikipedia/108360166";
+	else
+		$(window).trigger("hashchange");
+});
+function loadSet(url) {
+	$("#mw-content-text").load("../dump_dl/"+url+".html",function() {
+		$(".editsection").hide();
+	});
+	$.getJSON("../dump_dl/"+url+".meta",function(data) {
+		if(data.displaytitle)
+			$("#firstHeading span").html(data.displaytitle);
+	});
+}
+$(window).bind('hashchange', function (e){
+	var hash = location.href.substr(location.href.indexOf("#")).substring(1);
+	loadSet(hash);
+});
+</script>
 </head>
 <body class="mediawiki ltr sitedir-ltr capitalize-all-nouns ns-0 ns-subject skin-vector action-view vector-animateLayout">
 		<div id="mw-page-base" class="noprint"></div>
@@ -14,7 +37,7 @@
 		<div id="content" class="mw-body">
 			<a id="top"></a>
 			<!-- firstHeading -->
-			<h1 id="firstHeading" class="firstHeading"><span dir="auto">Sex</span></h1>
+			<h1 id="firstHeading" class="firstHeading"><span dir="auto">Loading...</span></h1>
 			<!-- /firstHeading -->
 			<!-- bodyContent -->
 			<div id="bodyContent">
@@ -23,7 +46,7 @@
 				<!-- /tagline -->
 								<!-- bodycontent -->
 				<div id="mw-content-text" lang="de" dir="ltr" class="mw-content-ltr">
-
+Loading...
 				</div>				<!-- /bodycontent -->
 												<div class="visualClear"></div>
 				<!-- debughtml -->
