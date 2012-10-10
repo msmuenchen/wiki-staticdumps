@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="de" dir="ltr" class="client-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Sex – Wikipedia</title>
+<title>Loading...</title>
 <meta charset="UTF-8">
 <meta name="generator" content="MediaWiki 1.20wmf12">
 <link rel="copyright" href="http://creativecommons.org/licenses/by-sa/3.0/">
@@ -20,8 +20,10 @@ function loadSet(url) {
 		$(".editsection").hide();
 	});
 	$.getJSON("../dump_dl/"+url+".meta",function(data) {
-		if(data.displaytitle)
+		if(data.displaytitle) {
 			$("#firstHeading span").html(data.displaytitle);
+			document.title=data.displaytitle+" - Wikipedia Offline";
+		}
 	});
 }
 $(window).bind('hashchange', function (e){
