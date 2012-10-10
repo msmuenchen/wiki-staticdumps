@@ -6,6 +6,8 @@
 
 require("common.php");
 
+$debug=false;
+
 $cfgfile=$argv[1];
 if(!is_file("$confdir/$cfgfile"))
   die("Broken config file $cfgfile\n");
@@ -46,17 +48,18 @@ while(($buf=fgets($fp))!==false) {
   $start_time=microtime(true);
   
   //prepare article id
-  $aid=trim($buf);
-  echo $aid."\n";
-  exit;
+  $data=trim($buf);
+  $a=array();
+  list($a["id"],$a["title"],$a["aid"],$a["is_redir"],$a["ns"])=explode("|",$data);
+  $cvid=$a["aid"];
   //skip over blank lines
-  if($aid=="")
+  if($cvid=="")
     continue;
   
   //prepare URL
   if($debug)
-    echo "Getting article ID $aid from server\n";
-  $url=$api_url."?action=parse&prop=text|displaytitle&format=json&oldid=$aid";
+    echo "Getting article ID $cvid from server\n";
+  $url=$api_url."?action=parse&prop=text|displaytitle&format=json&oldid=$cvid";
   if($debug)
     echo "URL is $url\n";
   curl_setopt($c,CURLOPT_URL,$url);
@@ -64,7 +67,7 @@ while(($buf=fgets($fp))!==false) {
   //run CURL request
   $ret=curl_exec($c);
   if($ret===false || curl_getinfo($c,CURLINFO_HTTP_CODE)!=200) {
-    fwrite($log_fp,"Error while downloading article with curID $aid\n");
+    fwrite($log_fp,"Error while downloading article with curID $cvid\n");
     echo "CURL error\n";
     break;
   }
@@ -87,7 +90,7 @@ while(($buf=fgets($fp))!==false) {
   
   //check for API error
   if(isset($data["error"])) {
-    fwrite($log_fp,"Error while downloading article with curID $aid: {$data['error']['code']} // {$data['error']['info']}\n");
+    fwrite($log_fp,"Error while downloading article with curID $cvid: {$data['error']['code']} // {$data['error']['info']}\n");
     continue;
   }
   
@@ -96,7 +99,7 @@ while(($buf=fgets($fp))!==false) {
   $aname=$data["parse"]["title"];
   
   //write output file
-  $outfile="$dlpath/$aid.html";
+  $outfile="$dlpath/$cvid.html";
   $d_fp=fopen($outfile,"w");
   if($d_fp===false)
     die("Error writing $outfile\n");
@@ -110,7 +113,7 @@ while(($buf=fgets($fp))!==false) {
     echo "Wrote to $outfile\n";
 
   //write meta to output file
-  $metafile="$dlpath/$aid.meta";
+  $metafile="$dlpath/$cvid.meta";
   $d_fp=fopen($metafile,"w");
   if($d_fp===false)
     die("Error writing $metafile\n");
@@ -124,15 +127,14 @@ while(($buf=fgets($fp))!==false) {
     echo "Wrote to $metafile\n";
 
   $stop_time=microtime(true);
-  fwrite($log_fp,"Downloaded article $aname (curID $aid) to $outfile, metadata to $metafile in ".($stop_time-$start_time)." sec\n");
+  $aname_safe=preg_replace('/[^(\x20-\x7F)]*/','', $aname);
+  fwrite($log_fp,"Downloaded article $aname_safe (curID $cvid, aid {$a['id']}) to $outfile, metadata to $metafile in ".($stop_time-$start_time)." sec\n");
 
   //show progress
-  if($c % 1000==0) {
-    echo "\x1b[1`";
-    echo str_pad(" ",60," ");
-    echo "\x1b[1`";
-    echo "$c";
-  }
+  echo "\x1b[1`";
+  echo str_pad(" ",60," ");
+  echo "\x1b[1`";
+  echo "$counter - $aname_safe - $cvid";
   
   $counter++;
 }
