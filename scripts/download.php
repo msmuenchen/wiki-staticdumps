@@ -115,7 +115,8 @@ while(($buf=fgets($fp))!==false) {
     $str="HTTP retcode: ".curl_getinfo($c,CURLINFO_HTTP_CODE)."\n";
     fwrite($log_fp,$str);
     echo "\n".$str;
-    break;
+    sleep(5);
+    goto begin;
   }
   
   //get request info
