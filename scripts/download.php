@@ -63,8 +63,6 @@ while(($buf=fgets($fp))!==false) {
   }
 
   begin:
-  //start output buffering in case error happens
-  ob_start();
   
   //start timer
   $start_time=microtime(true);
@@ -79,6 +77,18 @@ while(($buf=fgets($fp))!==false) {
   $a=array();
   list($a["id"],$a["title"],$a["aid"],$a["is_redir"],$a["ns"])=explode("|",$data);
   $cvid=$a["aid"];
+  $outfile="$dlpath/$cvid.html";  
+  $metafile="$dlpath/$cvid.meta";
+  
+  //check if files already exist
+  if(is_file($outfile) && is_file($metafile)) {
+    echo "\x1b[1`";
+    echo "$counter - ALREADY EXISTS";
+    continue;
+  }
+
+  //start output buffering in case error happens
+  ob_start();
   
   //prepare URL
   echo "Getting article ID $cvid from server\n";
@@ -138,7 +148,6 @@ while(($buf=fgets($fp))!==false) {
   $aname=$data["parse"]["title"];
   
   //write output file
-  $outfile="$dlpath/$cvid.html";
   $d_fp=fopen($outfile,"w");
   if($d_fp===false)
     die("Error writing $outfile\n");
@@ -151,7 +160,6 @@ while(($buf=fgets($fp))!==false) {
   echo "Wrote to $outfile\n";
 
   //write meta to output file
-  $metafile="$dlpath/$cvid.meta";
   $d_fp=fopen($metafile,"w");
   if($d_fp===false)
     die("Error writing $metafile\n");
@@ -176,7 +184,6 @@ while(($buf=fgets($fp))!==false) {
   echo "\x1b[1`";
   echo "$counter - $aname_safe - $cvid";
   
-  $counter++;
 }
 
 $total_stop=microtime(true);
