@@ -14,6 +14,40 @@ require("common.php");
 require("readmap.inc.php");
 require("ganon/ganon.php");
 
+//this function takes a ganon node (html-rootnode) and applies transforms
+//common to AJAX and static output
+function process_common($node) {
+  //step 1: remove redlinks (non-existing articles)
+  foreach($node("a[class]") as $element) {
+    if($element->class=="new")
+      $element->setOuterText($element->getInnerText());
+  }
+  
+  //step 2: remove editsection links
+  foreach($node("span.editsection") as $element)
+    $element->delete();
+}
+
+//this function takes a ganon node (html-rootnode) and applies transforms
+//needed only for static-page output (each html-page is a independent fullpage
+//after transform)
+function process_static($node) {
+  //step 2: rewrite links to articles
+  foreach($node("a[href]") as $element) {
+    echo "static: got a link to ".$element->href."\n";
+  }
+}
+
+//this function takes a ganon node (html-rootnode) and applies transforms
+//needed only for ajax-page output (each html-page depends on skin for display
+//after transform)
+function process_ajax($node) {
+  //step 2: rewrite links to articles
+  foreach($node("a[href]") as $element) {
+    echo "ajax: got a link to ".$element->href."\n";
+  }
+}
+
 $cfgfile=$argv[1];
 if(!is_file("$confdir/$cfgfile"))
   die("Broken config file $cfgfile\n");
@@ -79,7 +113,8 @@ while(($buf=fgets($fp))!==false) {
   $cvid=$a["aid"];
   $textfile="$dlpath/$cvid.html";  
   $metafile="$dlpath/$cvid.meta";
-  $outfile="$procpath/$cvid.html";
+  $outfile_ajax="$procpath/{$cvid}_ajax.html";
+  $outfile_static="$procpath/{$cvid}_static.html";
   
   //check if input files exist
   if(!is_file($textfile) || !is_file($metafile)) {
@@ -89,7 +124,7 @@ while(($buf=fgets($fp))!==false) {
   }
 
   //check if output files already exists
-  if(is_file($outfile) && false) {
+  if((is_file($outfile_ajax) && is_file($outfile_static)) && false) {
     echo "\x1b[1`";
     echo "$counter - ALREADY EXISTS";
     $skip=$counter+70;
@@ -97,34 +132,41 @@ while(($buf=fgets($fp))!==false) {
   }
   
   //read in HTML text
-  $html=file_get_dom($textfile);
+  $html_static=file_get_dom($textfile);
+  $html_ajax=file_get_dom($textfile);
   
-  //process block
+  process_common($html_static);
+  process_common($html_ajax);
   
-  //step 1: remove redlinks (non-existing articles)
-  foreach($html("a[class]") as $element) {
-    if($element->class=="new")
-      $element->setOuterText($element->getInnerText());
-  }
+  process_static($html_static);
+//  process_ajax($html_ajax);
   
-  //step 2: remove editsection links
-  foreach($html("span.editsection") as $element)
-    $element->delete();
-  
-  //write output file
-  $d_fp=fopen($outfile,"w");
+  //write ajax output file
+  $d_fp=fopen($outfile_ajax,"w");
   if($d_fp===false)
-    die("Error writing $outfile\n");
-  $res=fwrite($d_fp,$html);
+    die("Error writing $outfile_ajax\n");
+  $res=fwrite($d_fp,$html_ajax);
   if($res===false)
-    die("Error writing $outfile\n");
+    die("Error writing $outfile_ajax\n");
   $res=fclose($d_fp);
   if($res===false)
-    die("Error writing $outfile\n");
-  echo "Wrote to $outfile\n";
+    die("Error writing $outfile_ajax\n");
+  echo "Wrote to $outfile_ajax\n";
 
+  //write static html outfile
+  $d_fp=fopen($outfile_static,"w");
+  if($d_fp===false)
+    die("Error writing $outfile_static\n");
+  $res=fwrite($d_fp,$html_static);
+  if($res===false)
+    die("Error writing $outfile_static\n");
+  $res=fclose($d_fp);
+  if($res===false)
+    die("Error writing $outfile_static\n");
+  echo "Wrote to $outfile_static\n";
+  
   $stop_time=microtime(true);
-  fwrite($log_fp,"At $counter: processed $textfile id {$a['id']}) to $outfile in ".($stop_time-$start_time)." sec\n");
+  fwrite($log_fp,"At $counter: processed $textfile id {$a['id']}) to $outfile_static and $outfile_ajax in ".($stop_time-$start_time)." sec\n");
 
   //show progress
 /*  echo "\x1b[1`";
