@@ -19,7 +19,7 @@ function loadSet(url) {
 	$("#mw-content-text").load("../"+url+".html",function() {
 		$(".editsection").hide();
 	});
-	$.getJSON("../dump_dl/"+url+".meta",function(data) {
+	$.getJSON("../"+url+".meta",function(data) {
 		if(data.displaytitle) {
 			$("#firstHeading span").html(data.displaytitle);
 			document.title=data.displaytitle+" - Wikipedia Offline";
