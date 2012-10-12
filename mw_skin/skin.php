@@ -16,9 +16,7 @@ $(document).ready(function() {
 		$(window).trigger("hashchange");
 });
 function loadSet(url) {
-	$("#mw-content-text").load("../"+url+".html",function() {
-		$(".editsection").hide();
-	});
+	$("#mw-content-text").load("../"+url+".html");
 	$.getJSON("../"+url+".meta",function(data) {
 		if(data.displaytitle) {
 			$("#firstHeading span").html(data.displaytitle);
