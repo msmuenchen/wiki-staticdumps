@@ -71,9 +71,12 @@ while(($buf=fgets($fp))!==false) {
   $data=trim($buf);
 
   //skip over blank lines
-  if($data=="")
+  if($data=="") {
+    echo "\x1b[1`";
+    echo "$counter - BLANK LINE";
     continue;
-
+  }
+  
   $a=array();
   list($a["id"],$a["title"],$a["aid"],$a["is_redir"],$a["ns"])=explode("|",$data);
   $cvid=$a["aid"];
