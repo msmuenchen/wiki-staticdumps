@@ -184,7 +184,7 @@ while(($buf=fgets($fp))!==false) {
   
   //show progress
   echo "\x1b[1`";
-  echo str_pad(" ",60," ");
+  echo str_pad(" ",80," ");
   echo "\x1b[1`";
   echo "$counter - $aname_safe - $cvid";
   
