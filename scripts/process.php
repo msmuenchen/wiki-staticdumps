@@ -32,9 +32,26 @@ function process_common($node) {
 //needed only for static-page output (each html-page is a independent fullpage
 //after transform)
 function process_static($node) {
+  $apath=$siteinfo["general"]["articlepath"];
+  //FIXME: This only works for Wikimedia-style urls. Need to safely create regex...
+  $apath="/wiki/";
+
   //step 2: rewrite links to articles
   foreach($node("a[href]") as $element) {
-    echo "static: got a link to ".$element->href."\n";
+    if(substr($element->href,0,strlen($apath))==$apath) {
+      $target=substr($element->href,strlen($apath));
+      $target=str_replace("_"," ",$target);
+      $target=urldecode($target);
+      echo "static: got a wikilink to $target\n";
+    } elseif(substr($element->href,0,1)=="#") {
+      //fragment (section) links stay as-is
+//      echo "static: got a fragment link to ".$element->href."\n";
+    } else {
+      //external links stay as-is, maybe disable?
+      //TODO: For Wikimedia, wtf to do with Commons links and material? Include in dump?
+//      echo "static: got a ext link to ".$element->href."\n";
+    }
+    
   }
 }
 
