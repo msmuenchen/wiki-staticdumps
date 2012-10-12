@@ -16,7 +16,7 @@ $(document).ready(function() {
 		$(window).trigger("hashchange");
 });
 function loadSet(url) {
-	$("#mw-content-text").load("../dump_dl/"+url+".html",function() {
+	$("#mw-content-text").load("../"+url+".html",function() {
 		$(".editsection").hide();
 	});
 	$.getJSON("../dump_dl/"+url+".meta",function(data) {
