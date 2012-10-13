@@ -41,7 +41,7 @@ function getRevID($target,$nsmap) {
   if(isset($map[$key]))
     return $map[$key];
   
-  echo "Link $target in job $counter is invalid\n";
+//  echo "Link $target in job $counter is invalid\n";
   return 0;
 }
 //this function takes a ganon node (html-rootnode) and applies transforms
@@ -150,7 +150,7 @@ function process_ajax($node) {
       $target=substr($element->href,1);
       $element->href="";
       $element->onClick="jump('$target'); return false;";
-      echo "ajax: got a fragment link to $target\n";
+//      echo "ajax: got a fragment link to $target\n";
     } else {
       //external links stay as-is, maybe disable?
       //TODO: For Wikimedia, wtf to do with Commons links and material? Include in dump?
@@ -235,6 +235,8 @@ while(($buf=fgets($fp))!==false) {
     echo "$counter - BLANK LINE";
     continue;
   }
+  
+  echo "Begin read of $counter\n";
   
   $a=array();
   list($a["id"],$a["title"],$a["aid"],$a["is_redir"],$a["ns"])=explode("|",$data);
