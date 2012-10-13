@@ -14,6 +14,36 @@ require("common.php");
 require("readmap.inc.php");
 require("ganon/ganon.php");
 
+//this function takes a displaytitle (e.g. "Portal:Brot") and returns the numeric ID of the
+//namespace
+function getNSID($target,$nsmap) {
+  $colonpos=strpos($target,":");
+  if($colonpos===false) //no colon, this is article (NS 0)
+    return array(0,$target);
+  $ns=substr($target,0,$colonpos); //namespace string
+  $pname=substr($target,$colonpos+1); //page name
+  foreach($nsmap as $name=>$id)
+    if($ns==$name)
+      return array($id,$pname);
+  return 0;
+}
+
+//this function takes a displaytitle and returns the mapped revision-id
+//return 0 if no revid can be found
+//TODO: Resolve redirects
+function getRevID($target,$nsmap) {
+  global $map;
+  global $counter;
+  list($ns,$pname)=getNSID($target,$nsmap);
+  $pname_enc=base64_encode($pname);
+  $key="$ns|$pname_enc";
+  echo "link $target resolves to ns $ns and pagename $pname // enc $pname_enc and key -$key-\n";
+  if(isset($map[$key]))
+    return $map[$key];
+  
+  echo "Link $target in job $counter is invalid\n";
+  return 0;
+}
 //this function takes a ganon node (html-rootnode) and applies transforms
 //common to AJAX and static output
 function process_common($node) {
@@ -32,6 +62,10 @@ function process_common($node) {
 //needed only for static-page output (each html-page is a independent fullpage
 //after transform)
 function process_static($node) {
+  global $siteinfo;
+  //create namespace mapping
+  $nsmap=buildNSReverse($siteinfo["namespaces"],$siteinfo["namespacealiases"]);
+  
   $apath=$siteinfo["general"]["articlepath"];
   //FIXME: This only works for Wikimedia-style urls. Need to safely create regex...
   $apath="/wiki/";
@@ -40,9 +74,12 @@ function process_static($node) {
   foreach($node("a[href]") as $element) {
     if(substr($element->href,0,strlen($apath))==$apath) {
       $target=substr($element->href,strlen($apath));
-      $target=str_replace("_"," ",$target);
+//      $target=str_replace("_"," ",$target);
       $target=urldecode($target);
-      echo "static: got a wikilink to $target\n";
+      $revid=getRevId($target,$nsmap);
+      $element->href="{$revid}_static.html";
+      echo "static: got a wikilink to $target with mapped revid $revid\n";
+      
     } elseif(substr($element->href,0,1)=="#") {
       //fragment (section) links stay as-is
 //      echo "static: got a fragment link to ".$element->href."\n";
@@ -83,7 +120,9 @@ if($fp===false)
 $mapfile="$listdir/$listfile.map";
 if(!is_file($mapfile))
   die("Map file $mapfile does not exist. Did you run genmap.php?\n");
-//$map=readmap($mapfile);
+echo "Reading map...\n";
+$map=readmap($mapfile);
+echo "Map read\n";
 
 //check if download directory exists
 $dlpath="$dump_dl_dir/$listfile";
@@ -105,12 +144,27 @@ $log_fp=fopen($logfile,"a");
 if($log_fp===false)
   die("Error in fopen (logfile)\n");
 
+//check if skipping is enabled
+if(isset($argv[3]))
+  $skip=$argv[3];
+else
+  $skip=0;
+
 $total_start=microtime(true);
 
 $counter=0;
 //Loop over the article IDs
 while(($buf=fgets($fp))!==false) {
   $counter++;
+
+  //skip, if needed
+  if($counter<$skip) {
+    if($counter%10000==-1) {
+      echo "\x1b[1`";
+      echo "$counter - SKIP TO $skip";
+    }
+    continue;
+  }
     
   //start timer
   $start_time=microtime(true);
@@ -190,7 +244,7 @@ while(($buf=fgets($fp))!==false) {
   echo str_pad(" ",80," ");
   echo "\x1b[1`";*/
   echo "$counter - $cvid\n";
-  if($counter==1) {
+  if($counter==2860867) {
   echo $data."\n";
   exit;
   }
