@@ -37,7 +37,7 @@ function getRevID($target,$nsmap) {
   list($ns,$pname)=getNSID($target,$nsmap);
   $pname_enc=base64_encode($pname);
   $key="$ns|$pname_enc";
-  echo "link $target resolves to ns $ns and pagename $pname // enc $pname_enc and key -$key-\n";
+//  echo "link $target resolves to ns $ns and pagename $pname // enc $pname_enc and key -$key-\n";
   if(isset($map[$key]))
     return $map[$key];
   
@@ -76,9 +76,24 @@ function process_static($node) {
       $target=substr($element->href,strlen($apath));
 //      $target=str_replace("_"," ",$target);
       $target=urldecode($target);
-      $revid=getRevId($target,$nsmap);
-      $element->href="{$revid}_static.html";
-      echo "static: got a wikilink to $target with mapped revid $revid\n";
+      
+      //link to segment => do not deliver section and hash to getRevId!
+      $hashpos=strpos($target,"#");
+      if($hashpos!==false) {
+        $section=substr($target,$hashpos+1);
+        $pname=substr($target,0,$hashpos);
+      } else {
+        $section="";
+        $pname=$target;
+      }
+      $revid=getRevId($pname,$nsmap);
+      
+      if($section=="")
+        $element->href="{$revid}_static.html";
+      else
+        $element->href="{$revid}_static.html#$section";
+      
+      echo "static: got a wikilink to $target (pagename '$pname', section '$section') with mapped revid $revid\n";
       
     } elseif(substr($element->href,0,1)=="#") {
       //fragment (section) links stay as-is
@@ -121,7 +136,7 @@ $mapfile="$listdir/$listfile.map";
 if(!is_file($mapfile))
   die("Map file $mapfile does not exist. Did you run genmap.php?\n");
 echo "Reading map...\n";
-$map=readmap($mapfile);
+$map=array();//readmap($mapfile);
 echo "Map read\n";
 
 //check if download directory exists
