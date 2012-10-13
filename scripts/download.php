@@ -57,8 +57,10 @@ while(($buf=fgets($fp))!==false) {
   
   //skip, if needed
   if($counter<$skip) {
-    echo "\x1b[1`";
-    echo "$counter - SKIP TO $skip";
+    if($counter%10000==0) {
+      echo "\x1b[1`";
+      echo "$counter - SKIP TO $skip";
+    }
     continue;
   }
 
