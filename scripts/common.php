@@ -15,4 +15,19 @@ $curl_ua="swd static wiki dump v0.1a";	//CURL user agent
 
 if(is_file($confdir."/local.php"))	
   require($confdir."/local.php");	//include local changes
+
+//take what api.php?query=siteinfo&prop=namespace|namespacealiases gives us
+//and make a reverse lookup function
+function buildNSReverse($namespaces,$aliases) {
+  $ret=array();
+  foreach($namespaces as $id=>$data) {
+    $ret[$data["*"]]=$id;
+    if(isset($data["canonical"]))
+      $ret[$data["canonical"]]=$id;
+  }
+  foreach($aliases as $data) {
+    $ret[$data["*"]]=$data["id"];
+  }
+  return $ret;
+}
 ?>
