@@ -93,7 +93,7 @@ function process_static($node) {
       else
         $element->href="{$revid}_static.html#$section";
       
-      echo "static: got a wikilink to $target (pagename '$pname', section '$section') with mapped revid $revid\n";
+//      echo "static: got a wikilink to $target (pagename '$pname', section '$section') with mapped revid $revid\n";
       
     } elseif(substr($element->href,0,1)=="#") {
       //fragment (section) links stay as-is
@@ -111,10 +111,52 @@ function process_static($node) {
 //needed only for ajax-page output (each html-page depends on skin for display
 //after transform)
 function process_ajax($node) {
+  global $siteinfo;
+  //create namespace mapping
+  $nsmap=buildNSReverse($siteinfo["namespaces"],$siteinfo["namespacealiases"]);
+  
+  $apath=$siteinfo["general"]["articlepath"];
+  //FIXME: This only works for Wikimedia-style urls. Need to safely create regex...
+  $apath="/wiki/";
+
   //step 2: rewrite links to articles
   foreach($node("a[href]") as $element) {
-    echo "ajax: got a link to ".$element->href."\n";
-  }
+    if(substr($element->href,0,strlen($apath))==$apath) {
+      $target=substr($element->href,strlen($apath));
+//      $target=str_replace("_"," ",$target);
+      $target=urldecode($target);
+      
+      //link to segment => do not deliver section and hash to getRevId!
+      $hashpos=strpos($target,"#");
+      if($hashpos!==false) {
+        $section=substr($target,$hashpos+1);
+        $pname=substr($target,0,$hashpos);
+      } else {
+        $section="";
+        $pname=$target;
+      }
+      $revid=getRevId($pname,$nsmap);
+      
+      if($section=="")
+        $jump="load('$revid'); return false;";
+      else
+        $jump="load('$revid','$section'); return false;";
+      $element->href="";
+      $element->onClick=$jump;
+      
+//      echo "ajax: got a wikilink to $target (pagename '$pname', section '$section') with mapped revid $revid\n";
+      
+    } elseif(substr($element->href,0,1)=="#") {
+      $target=substr($element->href,1);
+      $element->href="";
+      $element->onClick="jump('$target'); return false;";
+      echo "ajax: got a fragment link to $target\n";
+    } else {
+      //external links stay as-is, maybe disable?
+      //TODO: For Wikimedia, wtf to do with Commons links and material? Include in dump?
+//      echo "static: got a ext link to ".$element->href."\n";
+    }
+  }   
 }
 
 $cfgfile=$argv[1];
@@ -136,7 +178,7 @@ $mapfile="$listdir/$listfile.map";
 if(!is_file($mapfile))
   die("Map file $mapfile does not exist. Did you run genmap.php?\n");
 echo "Reading map...\n";
-$map=array();//readmap($mapfile);
+$map=readmap($mapfile);
 echo "Map read\n";
 
 //check if download directory exists
@@ -210,7 +252,7 @@ while(($buf=fgets($fp))!==false) {
   }
 
   //check if output files already exists
-  if((is_file($outfile_ajax) && is_file($outfile_static)) && false) {
+  if(is_file($outfile_ajax) && is_file($outfile_static)) {
     echo "\x1b[1`";
     echo "$counter - ALREADY EXISTS";
     $skip=$counter+70;
@@ -225,7 +267,7 @@ while(($buf=fgets($fp))!==false) {
   process_common($html_ajax);
   
   process_static($html_static);
-//  process_ajax($html_ajax);
+  process_ajax($html_ajax);
   
   //write ajax output file
   $d_fp=fopen($outfile_ajax,"w");
@@ -255,14 +297,10 @@ while(($buf=fgets($fp))!==false) {
   fwrite($log_fp,"At $counter: processed $textfile id {$a['id']}) to $outfile_static and $outfile_ajax in ".($stop_time-$start_time)." sec\n");
 
   //show progress
-/*  echo "\x1b[1`";
+  echo "\x1b[1`";
   echo str_pad(" ",80," ");
-  echo "\x1b[1`";*/
+  echo "\x1b[1`";
   echo "$counter - $cvid\n";
-  if($counter==2860867) {
-  echo $data."\n";
-  exit;
-  }
 }
 
 $total_stop=microtime(true);
